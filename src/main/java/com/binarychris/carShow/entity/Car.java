@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 // @Table(name = "carTable") // changes name of table when converting
 public class Car {
-    @Id
+    @Id // primary key
     @GeneratedValue(strategy = GenerationType.AUTO)
     // strategies on how to convert to tables in sql for database
     //AUTO how primary key should be generated, main one for the job
@@ -19,17 +19,23 @@ public class Car {
     private String registerNumber;
     private int year;
     private double price;
+    @ManyToOne(fetch = FetchType.LAZY)
+    // EAGER - every time get info from car, will get info of owner too
+    // LAZY - only get info when needed, not all of both classes
+    @JoinColumn(name = "owner")
+    private Owner owner;
 
     public Car() {
     } // Hibernate will use this
 
-    public Car(String make, String model, String color, String registerNumber, int year, double price) {
+    public Car(String make, String model, String color, String registerNumber, int year, double price, Owner owner) {
         this.make = make;
         this.model = model;
         this.color = color;
         this.registerNumber = registerNumber;
         this.year = year;
         this.price = price;
+        this.owner = owner;
     }
 
     public Long getId() {
@@ -86,5 +92,13 @@ public class Car {
 
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public Owner getOwner() {
+        return owner;
+    }
+
+    public void setOwner(Owner owner) {
+        this.owner = owner;
     }
 }

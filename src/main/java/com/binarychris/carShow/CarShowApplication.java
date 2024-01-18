@@ -1,7 +1,12 @@
 package com.binarychris.carShow;
 
 import com.binarychris.carShow.entity.Car;
+import com.binarychris.carShow.entity.Owner;
+import com.binarychris.carShow.entity.User;
+import com.binarychris.carShow.exception.ApiError;
 import com.binarychris.carShow.repository.CarRepository;
+import com.binarychris.carShow.repository.OwnerRepository;
+import com.binarychris.carShow.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +30,10 @@ import java.util.List;
 public class CarShowApplication implements CommandLineRunner {
 	@Autowired
 	private CarRepository carRepository;
+	@Autowired
+	private OwnerRepository ownerRepository;
+	@Autowired
+	private UserRepository userRepository;
 private static final Logger logger = LoggerFactory.getLogger(CarShowApplication.class);
 	public static void main(String[] args) {
 
@@ -36,17 +45,27 @@ private static final Logger logger = LoggerFactory.getLogger(CarShowApplication.
 	@Override
 	public void run(String... args) throws Exception {
 		// everything in here will run before the spring boot
+		Owner owner1 = new Owner("John", "Doe");
+		Owner owner2 = new Owner("Jack", "Smith");
+		ownerRepository.save(owner1);
+		ownerRepository.save(owner2);
 		List<Car> cars = Arrays.asList(
-				new Car("Ford", "Lightning", "Gray", "FL-234", 2023, 75000),
-				new Car("Nissan", "Leaf", "Green", "BFG-345", 2022, 4000),
-				new Car("Toyota", "Sienna", "Silver", "CDF-233", 2024, 6000),
-				new Car("Honda", "Accord", "White", "HW-345", 2024, 57000)
+				new Car("Ford", "Lightning", "Gray", "FL-234", 2023, 75000, owner1),
+				new Car("Nissan", "Leaf", "Green", "BFG-345", 2022, 4000, owner2),
+				new Car("Toyota", "Sienna", "Silver", "CDF-233", 2024, 6000, owner1),
+				new Car("Honda", "Accord", "White", "HW-345", 2024, 57000, owner2)
 				);
 		carRepository.saveAll(cars);// adds all cars to database
 
+		userRepository.save(new User("user", "$2y$10$/cZcg7DCb4vmCgufbUy3jemb7qsbzJy2Ht5Nn7JjZdtIDolcFDvIq", "USER"));
+		userRepository.save(new User("admin", "$2y$10$C9vJrWAwWTQeo8cE1VJtCudoJKC.1yjZNqzzrnNHG.uH0lUd1nD/O", "ADMIN"));
+
 		carRepository
 				.findAll().forEach(car -> logger.info(car.getMake()+" "+car.getModel()));
+
+		ownerRepository.findAll().forEach(ow -> logger.info(ow.getFirstName()));
 	}			//.findAll() has access to .forEach() so we don't need .stream
+
 
 	// ORM (Object Relational Mapping) : is a technique that allows you to fetch from and manipulate a database
 	// by using OOP (Object Oriented Programming) paradigm. All relational databases use SQL. Can focus more on my logic now.

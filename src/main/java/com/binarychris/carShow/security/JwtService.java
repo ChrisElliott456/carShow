@@ -15,7 +15,7 @@ import java.util.Date;
 public class JwtService {
     static final long EXPIRATIONTIME = 86400000;
     static final String PREFIX = "Bearer";
-    static final Key key = Keys.secretKeyFor(SignatureAlgorithm.ES256);// won't use this, will use proper certificate on job
+    static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);// won't use this, will use proper certificate on job
     public String getToken(String username){
         String token = Jwts.builder()
                 .setSubject(username)
